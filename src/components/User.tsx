@@ -26,9 +26,10 @@ const Cache = (props) => {
   </div>)
 }
 
-const User = (props) => {
+function User(rln_instance, registry, cache) {
+
   return (
-    <div id={props.id}>
+    <div id={rln_instance.commitment.toString()}>
       <Message msg="test message" />
       <Cache />
       <Registry />

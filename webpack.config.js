@@ -57,6 +57,7 @@ const config = {
       "constants": false,
       "fs": false,
       "readline": false,
+      "process": false,
     }
   },
 };
