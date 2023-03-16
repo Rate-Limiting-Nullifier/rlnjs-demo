@@ -100,11 +100,11 @@ button {
   width: 100%;
 }
 
-.user1 {
+.user_left {
   margin-inline: 1rem;
 }
 
-.user1 .box {
+.user_left .box {
   border-color: var(--sunset);
   box-shadow: inset 0 0 1px 1px var(--sunset-light), 0 0 1px 1px var(--sunset-light);
 }
@@ -117,11 +117,11 @@ button {
   border-color: var(--green);
   box-shadow: inset 0 0 1px 1px var(--green-light), 0 0 1px 1px var(--green-light);}
 
-.user2 {
+.user_right {
   margin-inline: 1rem;
 }
 
-.user2 .box {
+.user_right .box {
   border-color: var(--blue);
   box-shadow: inset 0 0 1px 1px var(--blue-light) , 0 0 1px 1px var(--blue-light);
 }
