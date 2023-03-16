@@ -35,6 +35,17 @@ const App: React.FC = () => {
     createRLNInstance().then((_rln) => setUser2(_rln));
   }, []);
 
+  useEffect(() => {
+    if (user1 && user2) {
+      registry1.addMember(user1.commitment)
+      registry1.addMember(user2.commitment)
+      registry2.addMember(user1.commitment)
+      registry2.addMember(user2.commitment)
+      console.log("Members Registered")
+    }
+  }, [user1, user2])
+
+
   const handleRlnIdentifierChange = (newValue: BigInt) => {
     setAppID(newValue);
     setCache1(new Cache(newValue as StrBigInt));
