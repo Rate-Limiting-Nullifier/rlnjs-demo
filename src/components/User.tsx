@@ -1,20 +1,32 @@
 import React, { useEffect, useState } from 'react'
 
-import { RLN, Registry as RegistryType, Cache as CacheType } from 'rlnjs'
+import { RLN, Registry as RegistryType, Cache as CacheType, StrBigInt } from 'rlnjs'
 
 interface MessageProps {
   msg: string
   proof: string
+  publish: (message: string) => void
 }
 
-const MessageComponent: React.FC<MessageProps> = ({ msg, proof }) => {
+const MessageComponent: React.FC<MessageProps> = ({ msg, proof, publish }) => {
+  const [message, setMessage] = useState<string>(msg)
   const buttonMessage = 'Send'
+
+  const handlePublish = (() => {
+    console.log("Send Pressed")
+    publish(message)
+    setMessage('')
+  })
+
+  const handleChange = (event) => {
+    setMessage(event.target.value)
+  }
 
   return (
     <div className="message-container box">
       <h3>Message</h3>
-      <textarea className="message" defaultValue={msg}></textarea>
-      <button type="button" className="rounded-lg bg-green-300 px-6 pt-2.5 pb-2">
+      <textarea className="message" value={message} onChange={handleChange}></textarea>
+      <button type="button" className="rounded-lg bg-green-300 px-6 pt-2.5 pb-2" onClick={handlePublish}>
         {buttonMessage}
       </button>
       <h3>Proof</h3>
@@ -29,8 +41,9 @@ interface RegistryProps {
 
 const RegistryComponent: React.FC<RegistryProps> = ({ registry_instance }) => {
   const [members, setMembers] = useState<string[]>([])
-
+  console.log("RegistryComponent RegistryInstance and Members")
   console.log(registry_instance)
+  console.log("registry length: " + registry_instance.members.length)
   console.log(registry_instance.members)
 
   return (
@@ -48,28 +61,48 @@ const RegistryComponent: React.FC<RegistryProps> = ({ registry_instance }) => {
 }
 
 interface CacheProps {
-  cache_instance: any
+  cache_instance: CacheType
 }
 
 const CacheComponent: React.FC<CacheProps> = ({ cache_instance }) => {
+  console.log("CacheComponent")
+  console.log(cache_instance.cache)
   return (
     <div className="container box">
       <h3>CACHE</h3>
+      <div>{ }</div>
     </div>
   )
 }
 
 interface UserProps {
-  rln_instance: any
-  registry_instance: any
-  cache_instance: any
+  rln_instance: RLN
+  registry_instance: RegistryType
+  cache_instance: CacheType
+  epoch: BigInt
+  publishProof: (proof: object) => void
 }
 
-const User: React.FC<UserProps> = ({ rln_instance, registry_instance, cache_instance }) => {
-  console.log(registry_instance)
+const User: React.FC<UserProps> = (
+  { rln_instance,
+    registry_instance,
+    cache_instance,
+    epoch,
+    publishProof}
+) => {
+  const handlePublish = (message) => {
+    console.log("handlePublish Message: " + message)
+    rln_instance.generateProof(message,
+      registry_instance.generateMerkleProof(rln_instance.commitment),
+      epoch as StrBigInt).then(
+        (fullProof) => {
+          publishProof(fullProof)
+        })
+  }
+
   return (
     <div>
-      <MessageComponent msg="test message" proof="" />
+      <MessageComponent msg="test message" proof="" publish={handlePublish} />
       <CacheComponent cache_instance={cache_instance} />
       <RegistryComponent registry_instance={registry_instance} />
     </div>

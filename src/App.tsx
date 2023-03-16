@@ -42,6 +42,8 @@ const App: React.FC = () => {
       registry2.addMember(user1.commitment)
       registry2.addMember(user2.commitment)
       console.log("Members Registered")
+      console.log(registry1)
+      console.log(registry2)
     }
   }, [user1, user2])
 
@@ -58,6 +60,12 @@ const App: React.FC = () => {
     console.log("New Epoch: " + newValue)
   };
 
+  const publishProof = ((fullProof) => {
+    console.log("Proof Published: " + fullProof)
+    cache1.addProof(fullProof)
+    cache2.addProof(fullProof)
+  })
+
   return (
     <div className="App">
       <h1 className="title">RLNjs Demo</h1>
@@ -65,7 +73,7 @@ const App: React.FC = () => {
       <div className="columns">
         <div className="user_left">
           <h2>User 1</h2>
-          {user1 && <User rln_instance={user1} registry_instance={registry1} cache_instance={cache1} />}
+          {user1 && <User rln_instance={user1} registry_instance={registry1} cache_instance={cache1} epoch={epoch} publishProof={publishProof} />}
         </div>
         <div className="controls">
           <h2>App Controls</h2>
@@ -73,7 +81,7 @@ const App: React.FC = () => {
         </div>
         <div className="user_right">
           <h2>User 2</h2>
-          {user2 && <User rln_instance={user2} registry_instance={registry2} cache_instance={cache2} />}
+          {user2 && <User rln_instance={user2} registry_instance={registry2} cache_instance={cache2} epoch={epoch} publishProof={publishProof} />}
         </div>
       </div>
     </div>
