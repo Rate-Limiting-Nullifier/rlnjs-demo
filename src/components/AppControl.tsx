@@ -26,7 +26,7 @@ const AppControl: React.FC<AppControlProps> = ({ epoch, onEpochChange, rln_ident
   };
 
   const decrementEpoch = () => {
-    if (epoch > BigInt(0)) {
+    if (epoch > BigInt(1)) {
       const newEpoch = BigInt(epoch as bigint) - BigInt(1);
       onEpochChange(newEpoch);
     }

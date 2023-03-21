@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
-
 import { RLN, Registry as RegistryType, Cache as CacheType, StrBigInt } from 'rlnjs'
+import { toString, getObjectKeysAndValues } from '../utils'
+import { KeyValueList } from './KeyValueList'
 
 interface MessageProps {
   msg: string
@@ -67,10 +68,11 @@ interface CacheProps {
 const CacheComponent: React.FC<CacheProps> = ({ cache_instance }) => {
   console.log("CacheComponent")
   console.log(cache_instance.cache)
+
   return (
     <div className="container box">
       <h3>CACHE</h3>
-      <div>{ }</div>
+
     </div>
   )
 }
@@ -88,21 +90,23 @@ const User: React.FC<UserProps> = (
     registry_instance,
     cache_instance,
     epoch,
-    publishProof}
+    publishProof }
 ) => {
+  const [proof, setProof] = useState("")
   const handlePublish = (message) => {
     console.log("handlePublish Message: " + message)
     rln_instance.generateProof(message,
       registry_instance.generateMerkleProof(rln_instance.commitment),
       epoch as StrBigInt).then(
         (fullProof) => {
+          setProof("Message: '" + message + "'\nProof: " + toString(fullProof))
           publishProof(fullProof)
         })
   }
 
   return (
     <div>
-      <MessageComponent msg="test message" proof="" publish={handlePublish} />
+      <MessageComponent msg="test message" proof={proof} publish={handlePublish} />
       <CacheComponent cache_instance={cache_instance} />
       <RegistryComponent registry_instance={registry_instance} />
     </div>

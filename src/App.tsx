@@ -1,39 +1,39 @@
-import React, { useState, useEffect } from 'react';
-import './App.css';
-import User from './Components/User';
-import AppControl from './Components/AppControl';
-import { RLN, Registry, Cache } from 'rlnjs';
-import { StrBigInt, VerificationKeyT } from 'rlnjs/dist/types/types';
+import React, { useState, useEffect } from 'react'
+import './App.css'
+import User from './Components/User'
+import AppControl from './Components/AppControl'
+import { RLN, Registry, Cache } from 'rlnjs'
+import { StrBigInt, VerificationKeyT } from 'rlnjs/dist/types/types'
 
 const zkeyfiles = {
   vkeyPath: 'zkeyFiles/verification_key.json',
   wasmFilePath: 'zkeyFiles/rln.wasm',
   finalZkeyPath: 'zkeyFiles/rln_final.zkey',
-};
+}
 
-async function createRLNInstance(): Promise<RLN> {
-  const vKey = await fetch(zkeyfiles.vkeyPath).then((res) => res.json());
+async function createRLNInstance(app_identifier: BigInt): Promise<RLN> {
+  const vKey = await fetch(zkeyfiles.vkeyPath).then((res) => res.json())
 
-  return new RLN(zkeyfiles.wasmFilePath, zkeyfiles.finalZkeyPath, vKey as VerificationKeyT);
+  return new RLN(zkeyfiles.wasmFilePath, zkeyfiles.finalZkeyPath, vKey as VerificationKeyT, app_identifier as bigint)
 }
 
 const App: React.FC = () => {
-  const [appID, setAppID] = useState<BigInt>(BigInt(1234567890));
-  const [epoch, setEpoch] = useState<BigInt>(BigInt(0));
-  const [user1, setUser1] = useState<RLN | null>(null);
-  const [user2, setUser2] = useState<RLN | null>(null);
-  const [registry1, setRegistry1] = useState<Registry>(new Registry());
-  const [registry2, setRegistry2] = useState<Registry>(new Registry());
-  const [cache1, setCache1] = useState<Cache>(new Cache(appID as StrBigInt));
-  const [cache2, setCache2] = useState<Cache>(new Cache(appID as StrBigInt));
+  const [appID, setAppID] = useState<BigInt>(BigInt(1234567890))
+  const [epoch, setEpoch] = useState<BigInt>(BigInt(1))
+  const [user1, setUser1] = useState<RLN | null>(null)
+  const [user2, setUser2] = useState<RLN | null>(null)
+  const [registry1, setRegistry1] = useState<Registry>(new Registry())
+  const [registry2, setRegistry2] = useState<Registry>(new Registry())
+  const [cache1, setCache1] = useState<Cache>(new Cache(appID as StrBigInt))
+  const [cache2, setCache2] = useState<Cache>(new Cache(appID as StrBigInt))
 
   useEffect(() => {
-    createRLNInstance().then((_rln) => setUser1(_rln));
-  }, []);
+    createRLNInstance(appID).then((_rln) => setUser1(_rln))
+  }, [])
 
   useEffect(() => {
-    createRLNInstance().then((_rln) => setUser2(_rln));
-  }, []);
+    createRLNInstance(appID).then((_rln) => setUser2(_rln))
+  }, [])
 
   useEffect(() => {
     if (user1 && user2) {
@@ -49,21 +49,24 @@ const App: React.FC = () => {
 
 
   const handleRlnIdentifierChange = (newValue: BigInt) => {
-    setAppID(newValue);
-    setCache1(new Cache(newValue as StrBigInt));
-    setCache2(new Cache(newValue as StrBigInt));
-    console.log("New App ID: " + newValue);
-  };
+    setAppID(newValue)
+    setCache1(new Cache(newValue as StrBigInt))
+    setCache2(new Cache(newValue as StrBigInt))
+    console.log("New App ID: " + newValue)
+  }
 
   const handleEpochChange = (newValue: BigInt) => {
-    setEpoch(newValue);
+    setEpoch(newValue)
     console.log("New Epoch: " + newValue)
-  };
+  }
 
   const publishProof = ((fullProof) => {
-    console.log("Proof Published: " + fullProof)
-    cache1.addProof(fullProof)
-    cache2.addProof(fullProof)
+    console.log("Proof Published: ")
+    console.log(fullProof)
+    const status1 = cache1.addProof(fullProof)
+    console.log("Cache 1 Status: " + JSON.stringify(status1))
+    const status2 = cache2.addProof(fullProof)
+    console.log("Cache 2 Status: " + JSON.stringify(status2))
   })
 
   return (
@@ -85,7 +88,7 @@ const App: React.FC = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default App;
+export default App
