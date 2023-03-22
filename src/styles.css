@@ -1,0 +1,200 @@
+:root {
+  --gray: rgb(34, 34, 34);
+  --gray-light: rgba(242, 242, 242, 0.6);
+  --white: rgb(242, 242, 242);
+  --green: #88d848;
+  --green-light: #bdff88;
+  --blue: #5a9ded;
+  --blue-light: #53d3e0;
+  --blue-very-light: #a7f6ff;
+  --violet: #9198e5;
+  --violet-light: #b4bbff;
+  --mauve: #cc71c2;
+  --pink: #e66465;
+  --pink-light: #ff9c92;
+  --sunset: #ff7575;
+  --sunset-light: #ffb585;
+  --yellow: #ffe94d;
+  --yellow-light: #fff397;
+  --divider: #ff7575cc;
+  --btnbg: rgba(0, 0, 0, 0)
+    linear-gradient(
+      49.21deg,
+      rgba(127, 127, 213, 0.3) 19.87%,
+      rgba(134, 168, 231, 0.3) 58.46%,
+      rgba(145, 234, 228, 0.3) 97.05%
+    )
+    repeat scroll 0% 0%;
+  --btnbg-hover: rgba(0, 0, 0, 0)
+    linear-gradient(
+      49.21deg,
+      rgba(127, 127, 213, 0.5) 19.87%,
+      rgba(134, 168, 231, 0.5) 58.46%,
+      rgba(145, 234, 228, 0.5) 97.05%
+    )
+    repeat scroll 0% 0%;
+}
+
+body {
+  color: var(--white);
+  background-color: var(--gray);
+}
+
+.App {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin: 1rem 1rem;
+}
+.title {
+  color: #fff;
+}
+hr {
+  border: 1px solid var(--gray-light);
+  width: 28rem;
+  margin: 0.25rem 1rem 2rem 1rem;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin-block-start: 0.25em;
+  margin-block-end: 0.125em;
+  margin-inline: auto;
+  text-align: center;
+}
+
+input,
+textarea,
+button {
+  border: 1px solid var(--gray-light);
+  border-radius: 0.25rem;
+  padding: 0.5rem;
+}
+
+button {
+  font-weight: bold;
+}
+
+.box {
+  border: 1px solid var(--gray-light);
+  box-shadow: inset 0 0 1px 1px var(--yellow-light);
+  padding: 1rem 1.5rem;
+  border-radius: 0.5rem;
+  margin-block: 1rem;
+}
+
+.box:not(:first-of-type) {
+  margin-block: 1.5rem;
+}
+
+.columns {
+  display: grid;
+  grid-template-columns: 3fr 2fr 3fr;
+  gap: 2rem;
+  justify-items: normal;
+  width: 100%;
+}
+
+.user_left {
+  margin-inline: 1rem;
+}
+
+.user_left .box {
+  border-color: var(--sunset);
+  box-shadow: inset 0 0 1px 1px var(--sunset-light), 0 0 1px 1px var(--sunset-light);
+}
+
+.controls {
+  margin-inline: 1rem;
+}
+
+.controls .box {
+  border-color: var(--green);
+  box-shadow: inset 0 0 1px 1px var(--green-light), 0 0 1px 1px var(--green-light);
+}
+
+.user_right {
+  margin-inline: 1rem;
+}
+
+.user_right .box {
+  border-color: var(--blue);
+  box-shadow: inset 0 0 1px 1px var(--blue-light), 0 0 1px 1px var(--blue-light);
+}
+
+.message-container,
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  flex-direction: column;
+}
+
+.message {
+  padding: 0.5rem;
+  width: 100%;
+}
+.input {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  margin-bottom: 1rem;
+}
+
+.input:not(:last-child) {
+  margin-bottom: 1rem;
+}
+
+.input label {
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.input input {
+  padding: 0.5rem;
+}
+
+.input .plusminus {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  margin-block: 0.5rem;
+}
+
+.members {
+  list-style: none;
+  padding-left: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  word-wrap: anywhere;
+}
+
+.cache {
+  list-style: none;
+  padding-left: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  word-wrap: anywhere;
+}
+
+.cache_proof {
+  border-bottom: 1px solid var(--green-light);
+  padding-bottom: 0.33rem;
+  margin-bottom: 0.33rem;
+}
+
+.bigint {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 48ch;
+}
