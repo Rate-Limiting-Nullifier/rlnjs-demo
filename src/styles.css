@@ -138,7 +138,7 @@ button {
 
 .message {
   padding: 0.5rem;
-  width: 100%;
+  width: calc(100% - 1rem);
 }
 .input {
   display: flex;
@@ -196,5 +196,5 @@ button {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  width: 48ch;
+  width: 32ch;
 }

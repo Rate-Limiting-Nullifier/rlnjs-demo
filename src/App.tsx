@@ -193,12 +193,6 @@ const AppControl = (props) => {
     setAppID(newIdentifier)
   }
 
-  const handleEpochChange = (event) => {
-    const inputValue = event.target.value
-    const newEpoch = BigInt(inputValue)
-    setEpoch(newEpoch)
-  }
-
   const incrementEpoch = () => {
     const newEpoch = BigInt(epoch() as bigint) + BigInt(1)
     setEpoch(newEpoch)
@@ -218,12 +212,13 @@ const AppControl = (props) => {
       <small>Changing the App ID will reset the cache.</small></div>
     <div class="input">
       <label>Epoch:</label>
-      <input disabled={true} value={epoch().toString()} onChange={handleEpochChange}></input>
+      <h2>{epoch().toString()}</h2>
       <div class="plusminus">
         <button onClick={decrementEpoch}>-</button>
         <button onClick={incrementEpoch}>+</button>
       </div>
     </div>
+    <div>PublishQueue: {publishQueue().length}</div>
   </div>)
 }
 
