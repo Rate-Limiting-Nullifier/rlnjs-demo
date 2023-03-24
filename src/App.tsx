@@ -56,6 +56,9 @@ const App: Component = () => {
     // Add proofs to the cache from the publish queue
     while (publishQueue().length > 0) {
       const p = publishQueue().shift()
+      if (p == undefined) {
+        break
+      }
       console.log("Updating Caches")
       const status1 = cache1().addProof(p.proof as RLNFullProof)
       setStatusUser1([...statusUser1(), objectToString(status1)])
@@ -104,7 +107,6 @@ const App: Component = () => {
             appID={appID}
             setEpoch={setEpoch}
             epoch={epoch}
-            publishQueue={publishQueue}
           />
           <div class="box">
             <h3>

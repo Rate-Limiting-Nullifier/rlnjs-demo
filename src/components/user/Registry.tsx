@@ -15,7 +15,7 @@ const RegistryComponent = ({ registryInstance }: Props) => {
         {registryInstance().members.map((member) => {
           return (
             <li class="bigint">
-              <span style="font-style:italic">MemberID:</span> {member == 0n ? <span class="breach" style="font-weight: bold">REMOVED</span> : <span>member.toString()</span>}
+              <span style="font-style:italic">MemberID:</span> {member == 0n ? <span class="breach" style="font-weight: bold">REMOVED</span> : <span>{member.toString()}</span>}
             </li>
           )
         })}

@@ -21,7 +21,7 @@ const CacheComponent = ({ status }: Props) => {
               <div class='cache_proof breach'>
                 <div>
                   <div class="bigint">
-                    <span style="font-style: italic; text-transform: uppercase; font-weight: bold">Nulifier {status}</span>: {nullifier?.toString()}
+                    <span style="font-style: italic; text-transform: uppercase; font-weight: bold">Nulifier {status}:</span> {nullifier?.toString()}
                   </div>
                   <div class="bigint">
                     <span style="font-style: italic; font-weight: bold">Secret:</span> {secret?.toString()}
@@ -31,11 +31,18 @@ const CacheComponent = ({ status }: Props) => {
                   </div>
                 </div>
               </div>)
+          } else if (status == 'added') {
+            return (
+              <div class='cache_proof'>
+                <div class="bigint">
+                  <span style="font-style: italic">Nullifier {status}:</span> {nullifier?.toString()}
+                </div>
+              </div>)
           } else {
             return (
               <div class='cache_proof'>
                 <div class="bigint">
-                  <span style="font-style: italic">Nullifier {status}</span>: {nullifier?.toString()}
+                  <span style="font-style: italic">Nullifier {status}:</span> {msg}
                 </div>
               </div>)
           }

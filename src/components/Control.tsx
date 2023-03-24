@@ -6,10 +6,9 @@ type Props = {
   appID: Accessor<BigInt>
   setEpoch: (epoch: BigInt) => {}
   epoch: Accessor<BigInt>
-  publishQueue: Accessor<{ message: string, proof: RLNFullProof }[]>
 }
 
-const Control = ({ setAppID, appID, setEpoch, epoch, publishQueue }: Props) => {
+const Control = ({ setAppID, appID, setEpoch, epoch }: Props) => {
   const handleIdentifierChange = ({ target }) => {
     const inputValue = target.value
     const newIdentifier = BigInt(inputValue)
@@ -45,7 +44,6 @@ const Control = ({ setAppID, appID, setEpoch, epoch, publishQueue }: Props) => {
           <button onClick={decrementEpoch}>-</button>
           <button onClick={incrementEpoch}>+</button>
         </div>
-        <div>PublishQueue: {publishQueue().length}</div>
       </div>
     </div>
   )
