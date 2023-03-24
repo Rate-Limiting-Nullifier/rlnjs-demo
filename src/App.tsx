@@ -8,10 +8,16 @@ import './styles.css'
 import { RLN, Registry, Cache } from 'rlnjs'
 import { StrBigInt, VerificationKeyT, RLNFullProof } from 'rlnjs/dist/types/types'
 import { poseidon1 } from 'poseidon-lite'
+import AppControl from './assets/components/control'
 
 // Getters & Setters for all RLNjs objects
 const [appID, setAppID] = createSignal<BigInt>(BigInt(1234567890)) // RLN_Identifier
 const [epoch, setEpoch] = createSignal<BigInt>(BigInt(1)) // Epoch
+
+
+
+
+
 const [user1, setUser1] = createSignal<RLN>(await createRLNInstance(appID()).then(
   (_rln) => _rln
 )) // User 1's RLN instance
@@ -78,10 +84,13 @@ const App: Component = () => {
           <CacheComponent status={statusUser1} />
           <RegistryComponent registry_instance={registry1} />
         </div>
-        <div class="controls">
-          <h2>App Controls</h2>
-          <AppControl />
-        </div>
+        <AppControl
+          setAppID={setAppID}
+          appID={appID}
+          setEpoch={setEpoch}
+          epoch={epoch}
+          publishQueue={publishQueue}
+        />
         <div class="user_right">
           <h2>User 2</h2>
           <User rln_instance={user2} userProof={user2proof} setUserProof={setUser2Proof} publishProof={publishProof} registry_instance={registry2} />
@@ -186,40 +195,5 @@ const RegistryComponent = (props) => {
   )
 }
 
-const AppControl = (props) => {
-  const handleIdentifierChange = (event) => {
-    const inputValue = event.target.value
-    const newIdentifier = BigInt(inputValue)
-    setAppID(newIdentifier)
-  }
-
-  const incrementEpoch = () => {
-    const newEpoch = BigInt(epoch() as bigint) + BigInt(1)
-    setEpoch(newEpoch)
-  }
-
-  const decrementEpoch = () => {
-    if (epoch() > BigInt(1)) {
-      const newEpoch = BigInt(epoch() as bigint) - BigInt(1)
-      setEpoch(newEpoch)
-    }
-  }
-
-  return (<div class='box'>
-    <div class="input">
-      <label>App ID:</label>
-      <input type="number" value={appID().toString()} onChange={handleIdentifierChange}></input>
-      <small>Changing the App ID will reset the cache.</small></div>
-    <div class="input">
-      <label>Epoch:</label>
-      <h2>{epoch().toString()}</h2>
-      <div class="plusminus">
-        <button onClick={decrementEpoch}>-</button>
-        <button onClick={incrementEpoch}>+</button>
-      </div>
-    </div>
-    <div>PublishQueue: {publishQueue().length}</div>
-  </div>)
-}
 
 export default App
