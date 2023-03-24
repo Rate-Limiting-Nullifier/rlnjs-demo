@@ -1,18 +1,15 @@
-import { createSignal, createEffect } from 'solid-js'
 import type { Component } from 'solid-js'
-import { objectToString } from './utils'
-
-import vKey from './zkeyFiles/verification_key.json'
-import './styles.css'
-
 import { RLN, Registry, Cache } from 'rlnjs'
+import { createSignal, createEffect } from 'solid-js'
 import { StrBigInt, VerificationKeyT, RLNFullProof } from 'rlnjs/dist/types/types'
+
+import './styles.css'
+import { objectToString } from './utils'
 import Control from './components/Control'
 import User from './components/user/User'
+import vKey from './zkeyFiles/verification_key.json'
+import { appID, publishQueue, setPublishQueue } from './store/store'
 
-// Getters & Setters for all RLNjs objects
-const [appID, setAppID] = createSignal<BigInt>(BigInt(1234567890)) // RLN_Identifier
-const [epoch, setEpoch] = createSignal<BigInt>(BigInt(1)) // Epoch
 
 // TODO: design for N users
 const [user1, setUser1] = createSignal<RLN>(await createRLNInstance(appID()).then(
@@ -29,7 +26,6 @@ const [statusUser1, setStatusUser1] = createSignal<string[]>([]) // User 1's Sta
 const [statusUser2, setStatusUser2] = createSignal<string[]>([]) // User 2's Status
 const [user1proof, setUser1Proof] = createSignal<string | null>(null) // User 1's Last Proof as a string
 const [user2proof, setUser2Proof] = createSignal<string | null>(null) // User 2's Last Proof as a string
-const [publishQueue, setPublishQueue] = createSignal<RLNFullProof[]>([]) // Queue of proofs to be published
 
 async function createRLNInstance(app_identifier: BigInt): Promise<RLN> {
   return new RLN('/src/zkeyFiles/rln.wasm', '/src/zkeyFiles/rln_final.zkey', vKey as VerificationKeyT, app_identifier as bigint)
@@ -78,7 +74,6 @@ const App: Component = () => {
         <div class="user_left">
           <User
             index={1}
-            epoch={epoch}
             rlnInstance={user1}
             userProof={user1proof}
             registryInstance={registry1}
@@ -87,17 +82,10 @@ const App: Component = () => {
             status={statusUser1}
           />
         </div>
-        <Control
-          setAppID={setAppID}
-          appID={appID}
-          setEpoch={setEpoch}
-          epoch={epoch}
-          publishQueue={publishQueue}
-        />
+        <Control/>
         <div class="user_right">
           <User
             index={2}
-            epoch={epoch}
             rlnInstance={user2}
             userProof={user2proof}
             registryInstance={registry2}

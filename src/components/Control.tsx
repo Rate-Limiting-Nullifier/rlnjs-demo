@@ -1,15 +1,6 @@
-import { RLNFullProof } from 'rlnjs'
-import { Accessor } from 'solid-js'
+import { appID, epoch, setAppID, setEpoch, publishQueue } from '../store/store'
 
-type Props = {
-    setAppID: (appID: BigInt) => {}
-    appID: Accessor<BigInt>
-    setEpoch: (epoch: BigInt) => {}
-    epoch: Accessor<BigInt>
-    publishQueue: Accessor<RLNFullProof[]>
-}
-
-const Control = ({ setAppID, appID, setEpoch, epoch, publishQueue }: Props) => {
+const Control = () => {
     const handleIdentifierChange = ({ target }) => {
       const inputValue = target.value
       const newIdentifier = BigInt(inputValue)

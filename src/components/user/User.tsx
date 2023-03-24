@@ -6,12 +6,11 @@ type Props = {
     index: number
 } & PropsMessage & PropsCache & PropsRegistry
 
-const User = ({ index, epoch, rlnInstance, userProof, setUserProof, publishProof, registryInstance, status }: Props) => {
+const User = ({ index, rlnInstance, userProof, setUserProof, publishProof, registryInstance, status }: Props) => {
     return (
         <div>
             <h2>User { index }</h2>
             <Message
-                epoch={epoch}
                 rlnInstance={rlnInstance}
                 userProof={userProof}
                 registryInstance={registryInstance}

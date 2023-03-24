@@ -1,9 +1,9 @@
 import { Registry, RLN, StrBigInt } from "rlnjs"
 import { Accessor, createSignal } from "solid-js"
+import { epoch } from "../../store/store"
 import { objectToString } from "../../utils"
 
 export type Props = {
-    epoch: Accessor<BigInt>
     rlnInstance: Accessor<RLN>
     userProof: Accessor<string | null>
     setUserProof: (userProof: string) => {}
@@ -11,7 +11,7 @@ export type Props = {
     registryInstance: Accessor<Registry>
 }
 
-const Message = ({ epoch, rlnInstance, userProof, setUserProof, publishProof, registryInstance }: Props) => {
+const Message = ({ rlnInstance, userProof, setUserProof, publishProof, registryInstance }: Props) => {
     const [message, setMessage] = createSignal<string>("Put your message here")
     const [disableButton, setDisableButton] = createSignal<boolean>(false)
 
