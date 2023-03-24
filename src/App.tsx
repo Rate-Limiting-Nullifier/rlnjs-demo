@@ -7,7 +7,7 @@ import './styles.css'
 
 import { RLN, Registry, Cache } from 'rlnjs'
 import { StrBigInt, VerificationKeyT, RLNFullProof } from 'rlnjs/dist/types/types'
-import AppControl from './assets/components/Control'
+import Control from './assets/components/Control'
 import User from './assets/components/user/User'
 
 // Getters & Setters for all RLNjs objects
@@ -87,7 +87,7 @@ const App: Component = () => {
             status={statusUser1}
           />
         </div>
-        <AppControl
+        <Control
           setAppID={setAppID}
           appID={appID}
           setEpoch={setEpoch}

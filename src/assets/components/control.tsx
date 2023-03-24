@@ -9,7 +9,7 @@ type Props = {
     publishQueue: Accessor<RLNFullProof[]>
 }
 
-const AppControl = ({ setAppID, appID, setEpoch, epoch, publishQueue }: Props) => {
+const Control = ({ setAppID, appID, setEpoch, epoch, publishQueue }: Props) => {
     const handleIdentifierChange = ({ target }) => {
       const inputValue = target.value
       const newIdentifier = BigInt(inputValue)
@@ -51,4 +51,4 @@ const AppControl = ({ setAppID, appID, setEpoch, epoch, publishQueue }: Props) =
     )
 }
 
-  export default AppControl
+  export default Control
