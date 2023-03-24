@@ -1,23 +1,20 @@
 import { createSignal, createEffect } from 'solid-js'
 import type { Component } from 'solid-js'
-import { objectToString, getObjectKeysAndValues } from './utils'
+import { objectToString } from './utils'
 
 import vKey from './zkeyFiles/verification_key.json'
 import './styles.css'
 
 import { RLN, Registry, Cache } from 'rlnjs'
 import { StrBigInt, VerificationKeyT, RLNFullProof } from 'rlnjs/dist/types/types'
-import { poseidon1 } from 'poseidon-lite'
-import AppControl from './assets/components/control'
+import AppControl from './assets/components/Control'
+import User from './assets/components/user/User'
 
 // Getters & Setters for all RLNjs objects
 const [appID, setAppID] = createSignal<BigInt>(BigInt(1234567890)) // RLN_Identifier
 const [epoch, setEpoch] = createSignal<BigInt>(BigInt(1)) // Epoch
 
-
-
-
-
+// TODO: design for N users
 const [user1, setUser1] = createSignal<RLN>(await createRLNInstance(appID()).then(
   (_rln) => _rln
 )) // User 1's RLN instance
@@ -67,7 +64,7 @@ const App: Component = () => {
     }
   })
 
-  const publishProof = (fullProof) => {
+  const publishProof = (fullProof: RLNFullProof) => {
     console.log("Publishing Proof")
     // Add proof to the publish queue
     setPublishQueue([...publishQueue(), fullProof])
@@ -79,10 +76,16 @@ const App: Component = () => {
       <hr />
       <div class="columns">
         <div class="user_left">
-          <h2>User 1</h2>
-          <User rln_instance={user1} userProof={user1proof} setUserProof={setUser1Proof} publishProof={publishProof} registry_instance={registry1} />
-          <CacheComponent status={statusUser1} />
-          <RegistryComponent registry_instance={registry1} />
+          <User
+            index={1}
+            epoch={epoch}
+            rlnInstance={user1}
+            userProof={user1proof}
+            registryInstance={registry1}
+            setUserProof={setUser1Proof}
+            publishProof={publishProof}
+            status={statusUser1}
+          />
         </div>
         <AppControl
           setAppID={setAppID}
@@ -92,108 +95,20 @@ const App: Component = () => {
           publishQueue={publishQueue}
         />
         <div class="user_right">
-          <h2>User 2</h2>
-          <User rln_instance={user2} userProof={user2proof} setUserProof={setUser2Proof} publishProof={publishProof} registry_instance={registry2} />
-          <CacheComponent status={statusUser2} />
-          <RegistryComponent registry_instance={registry2} />
+          <User
+            index={2}
+            epoch={epoch}
+            rlnInstance={user2}
+            userProof={user2proof}
+            registryInstance={registry2}
+            setUserProof={setUser2Proof}
+            publishProof={publishProof}
+            status={statusUser2}
+          />
         </div>
       </div>
     </div >
   )
 }
-
-const User = (props: any) => {
-  const [message, setMessage] = createSignal<string>("Put your message here")
-  const [publishMessage, setPublishMessage] = createSignal<string>("Publish Message")
-  const [disableButton, setDisableButton] = createSignal<boolean>(false)
-  const { rln_instance, userProof, setUserProof, publishProof, registry_instance } = props
-  const handleChange = (event) => {
-    setMessage(event.target.value.toString())
-  }
-  const handlePublish = (event) => {
-    setPublishMessage("Publishing...")
-    setDisableButton(true)
-    console.log("handlePublish Message: " + message())
-    rln_instance().generateProof(message(),
-      registry_instance().generateMerkleProof(rln_instance().commitment),
-      epoch() as StrBigInt).then(
-        (fullProof: any) => {
-          setUserProof("Message: '" + message() + "'\nProof: " + objectToString(fullProof))
-          publishProof(fullProof)
-        })
-    setPublishMessage("Publish Message")
-    setDisableButton(false)
-  }
-
-  return (
-    <div>
-      <div class="message_container box">
-        <h3>Message</h3>
-        <textarea class="message" value={message()} onChange={handleChange}></textarea>
-        <button type="button" class="rounded-lg bg-green-300 px-6 pt-2.5 pb-2" onClick={handlePublish} disabled={disableButton()}>
-          {publishMessage()}
-        </button>
-        <h3>Proof</h3>
-        <textarea class="message proof" disabled={true} rows={4} value={userProof()}></textarea>
-      </div >
-    </div>
-  )
-}
-
-const CacheComponent = (props) => {
-  const { status } = props
-  console.log(status())
-  return (
-    <div class="container box">
-      <h3>Cache Status</h3>
-      <div class="cache">
-        {status().map((s) => {
-          s = JSON.parse(s)
-          let breached = (<></>)
-          if (s.status == "breach") {
-            let secret = poseidon1([BigInt(s.secret)]).toString()
-            breached = (<div>
-              <div class="bigint">Secret: {s.secret}</div>
-              <div class="bigint">IdCommitment: {secret}</div>
-            </div>)
-          }
-          return (<>
-            <div class="cache_proof">
-              <div class="bigint">{s.status}: {s.nullifier}
-              </div>
-              {breached}
-            </div>
-
-          </>)
-        })}
-      </div>
-    </div >
-  )
-}
-
-const RegistryComponent = (props) => {
-  const [members, setMembers] = createSignal<string[]>([])
-  const { registry_instance } = props
-
-  createEffect(() => {
-    setMembers(registry_instance().members.map((member) => member.toString()))
-  })
-
-  return (
-    <div class="container box">
-      <h3>Id Commitment Registry</h3>
-      <ul class="members">
-        {registry_instance().members.map((member) => {
-          return (
-            <li class="bigint">
-              {member.toString()}
-            </li>
-          )
-        })}
-      </ul>
-    </div>
-  )
-}
-
 
 export default App
