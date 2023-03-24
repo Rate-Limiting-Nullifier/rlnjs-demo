@@ -198,3 +198,7 @@ button {
   text-overflow: ellipsis;
   width: 32ch;
 }
+
+.publishButton {
+  font-weight: bold;
+}
