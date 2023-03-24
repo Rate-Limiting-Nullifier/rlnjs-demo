@@ -116,7 +116,9 @@ const App: Component = () => {
               return (
                 <div class="published_message">
                   <div class="smallerint">Msg: {p.message}</div>
-                  <div class="smallerint">by: {p.proof.snarkProof.publicSignals.internalNullifier.toString()}</div>
+                  <div class="smallerint">By: {p.proof.snarkProof.publicSignals.internalNullifier.toString()}</div>
+                  <div class="smallerint">Epoch: {p.proof.snarkProof.publicSignals.externalNullifier.toString()}</div>
+
                 </div>)
             })}
           </div>
