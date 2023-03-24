@@ -9,6 +9,7 @@ import { RLN, Registry, Cache } from 'rlnjs'
 import { StrBigInt, VerificationKeyT, RLNFullProof } from 'rlnjs/dist/types/types'
 import Control from './components/Control'
 import User from './components/user/User'
+import { poseidon1 } from 'poseidon-lite'
 
 // Getters & Setters for all RLNjs objects
 const [appID, setAppID] = createSignal<BigInt>(BigInt(1234567890)) // RLN_Identifier
@@ -29,7 +30,8 @@ const [statusUser1, setStatusUser1] = createSignal<string[]>([]) // User 1's Sta
 const [statusUser2, setStatusUser2] = createSignal<string[]>([]) // User 2's Status
 const [user1proof, setUser1Proof] = createSignal<string | null>(null) // User 1's Last Proof as a string
 const [user2proof, setUser2Proof] = createSignal<string | null>(null) // User 2's Last Proof as a string
-const [publishQueue, setPublishQueue] = createSignal<RLNFullProof[]>([]) // Queue of proofs to be published
+const [publishQueue, setPublishQueue] = createSignal<{ message: string, proof: RLNFullProof }[]>([]) // Queue of proofs to be published
+const [publishedMsgProofs, setPublishedMsgProofs] = createSignal<{ message: string, proof: RLNFullProof }[]>([]) // List of published proofs
 
 async function createRLNInstance(app_identifier: BigInt): Promise<RLN> {
   return new RLN('/src/zkeyFiles/rln.wasm', '/src/zkeyFiles/rln_final.zkey', vKey as VerificationKeyT, app_identifier as bigint)
@@ -55,19 +57,28 @@ const App: Component = () => {
     while (publishQueue().length > 0) {
       const p = publishQueue().shift()
       console.log("Updating Caches")
-      const status1 = cache1().addProof(p as RLNFullProof)
+      const status1 = cache1().addProof(p.proof as RLNFullProof)
       setStatusUser1([...statusUser1(), objectToString(status1)])
-      const status2 = cache2().addProof(p as RLNFullProof)
+      const status2 = cache2().addProof(p.proof as RLNFullProof)
       setStatusUser2([...statusUser2(), objectToString(status2)])
       setCache1(cache1())
       setCache2(cache2())
+      if (status1.secret) {
+        registry1().slashMember(poseidon1([status1.secret]))
+        setRegistry1(registry1())
+      }
+      if (status2.secret) {
+        registry2().slashMember(poseidon1([status2.secret]))
+        setRegistry2(registry2())
+      }
+      setPublishedMsgProofs([...publishedMsgProofs(), p])
     }
   })
 
-  const publishProof = (fullProof: RLNFullProof) => {
+  const publishProof = (msgProof: { message: string, proof: RLNFullProof }) => {
     console.log("Publishing Proof")
     // Add proof to the publish queue
-    setPublishQueue([...publishQueue(), fullProof])
+    setPublishQueue([...publishQueue(), msgProof])
   }
 
   return (
@@ -87,13 +98,27 @@ const App: Component = () => {
             status={statusUser1}
           />
         </div>
-        <Control
-          setAppID={setAppID}
-          appID={appID}
-          setEpoch={setEpoch}
-          epoch={epoch}
-          publishQueue={publishQueue}
-        />
+        <div class="controls">
+          <Control
+            setAppID={setAppID}
+            appID={appID}
+            setEpoch={setEpoch}
+            epoch={epoch}
+            publishQueue={publishQueue}
+          />
+          <div class="box">
+            <h3>
+              Published Messages
+            </h3>
+            {publishedMsgProofs().map((p) => {
+              return (
+                <div class="published_message">
+                  <div class="smallerint">Msg: {p.message}</div>
+                  <div class="smallerint">by: {p.proof.snarkProof.publicSignals.internalNullifier.toString()}</div>
+                </div>)
+            })}
+          </div>
+        </div>
         <div class="user_right">
           <User
             index={2}

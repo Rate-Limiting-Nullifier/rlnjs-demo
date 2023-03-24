@@ -187,12 +187,25 @@ button {
 }
 
 .cache_proof {
-  border-bottom: 1px solid var(--green-light);
-  padding-bottom: 0.33rem;
-  margin-bottom: 0.33rem;
+  border: 2px solid var(--green-light);
+  padding: 0.5rem;
+  margin: 0.5rem;
+  border-radius: 0.5rem;
+}
+
+.breach {
+  border-color: var(--sunset);
+  color: var(--sunset-light);
 }
 
 .bigint {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 48ch;
+}
+
+.smallerint {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -201,4 +214,12 @@ button {
 
 .publishButton {
   font-weight: bold;
+}
+
+.published_message {
+  padding-block: 0.5rem;
+}
+
+.published_message:not(:last-child) {
+  border-bottom: 1px solid var(--gray-light);
 }

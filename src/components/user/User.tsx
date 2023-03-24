@@ -1,6 +1,6 @@
-import Message, {Props as PropsMessage} from "./Message"
-import Cache, {Props as PropsCache} from "./Cache"
-import Registry, {Props as PropsRegistry} from "./Registry"
+import Message, { Props as PropsMessage } from "./Message"
+import Cache, { Props as PropsCache } from "./Cache"
+import Registry, { Props as PropsRegistry } from "./Registry"
 
 type Props = {
     index: number
@@ -9,7 +9,7 @@ type Props = {
 const User = ({ index, epoch, rlnInstance, userProof, setUserProof, publishProof, registryInstance, status }: Props) => {
     return (
         <div>
-            <h2>User { index }</h2>
+            <h2>User {index}</h2>
             <Message
                 epoch={epoch}
                 rlnInstance={rlnInstance}
@@ -18,14 +18,14 @@ const User = ({ index, epoch, rlnInstance, userProof, setUserProof, publishProof
                 setUserProof={setUserProof}
                 publishProof={publishProof}
             />
-            <Cache
-                status={status}
-            />
             <Registry
                 registryInstance={registryInstance}
             />
+            <Cache
+                status={status}
+            />
         </div>
     )
-  }
+}
 
-  export default User
+export default User
