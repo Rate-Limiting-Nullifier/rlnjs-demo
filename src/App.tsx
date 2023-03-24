@@ -7,8 +7,8 @@ import './styles.css'
 
 import { RLN, Registry, Cache } from 'rlnjs'
 import { StrBigInt, VerificationKeyT, RLNFullProof } from 'rlnjs/dist/types/types'
-import Control from './assets/components/Control'
-import User from './assets/components/user/User'
+import Control from './components/Control'
+import User from './components/user/User'
 
 // Getters & Setters for all RLNjs objects
 const [appID, setAppID] = createSignal<BigInt>(BigInt(1234567890)) // RLN_Identifier

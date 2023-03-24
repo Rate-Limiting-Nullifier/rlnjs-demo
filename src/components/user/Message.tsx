@@ -1,6 +1,6 @@
 import { Registry, RLN, StrBigInt } from "rlnjs"
 import { Accessor, createSignal } from "solid-js"
-import { objectToString } from "../../../utils"
+import { objectToString } from "../../utils"
 
 export type Props = {
     epoch: Accessor<BigInt>
