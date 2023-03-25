@@ -1,23 +1,20 @@
 import type { Component } from 'solid-js'
-import { RLN, Registry, Cache } from 'rlnjs'
+import { Registry, Cache } from 'rlnjs'
 import { createSignal, createEffect } from 'solid-js'
-import { StrBigInt, VerificationKeyT, RLNFullProof } from 'rlnjs/dist/types/types'
+import { StrBigInt, RLNFullProof } from 'rlnjs/dist/types/types'
 
 import './styles.css'
 import { objectToString } from './utils'
 import Control from './components/Control'
 import User from './components/user/User'
-import vKey from './zkeyFiles/verification_key.json'
+import { users, addNewUser } from './store/users'
 import { appID, publishQueue, setPublishQueue } from './store/store'
 
+addNewUser();
+addNewUser();
+const _user1 = users[0];
+const _user2 = users[1];
 
-// TODO: design for N users
-const [user1, setUser1] = createSignal<RLN>(await createRLNInstance(appID()).then(
-  (_rln) => _rln
-)) // User 1's RLN instance
-const [user2, setUser2] = createSignal<RLN>(await createRLNInstance(appID()).then(
-  (_rln) => _rln
-)) // User 2's RLN instance
 const [registry1, setRegistry1] = createSignal<Registry>(new Registry()) // User 1's Registry
 const [registry2, setRegistry2] = createSignal<Registry>(new Registry()) // User 2's Registry
 const [cache1, setCache1] = createSignal<Cache>(new Cache(appID() as StrBigInt)) // User 1's Cache
@@ -27,22 +24,19 @@ const [statusUser2, setStatusUser2] = createSignal<string[]>([]) // User 2's Sta
 const [user1proof, setUser1Proof] = createSignal<string | null>(null) // User 1's Last Proof as a string
 const [user2proof, setUser2Proof] = createSignal<string | null>(null) // User 2's Last Proof as a string
 
-async function createRLNInstance(app_identifier: BigInt): Promise<RLN> {
-  return new RLN('/src/zkeyFiles/rln.wasm', '/src/zkeyFiles/rln_final.zkey', vKey as VerificationKeyT, app_identifier as bigint)
-}
 
 const App: Component = () => {
   createEffect(() => {
     // Add User1 to both registries
-    registry1().addMember(user1().commitment)
-    registry2().addMember(user1().commitment)
+    registry1().addMember(_user1.rln.get().commitment)
+    registry2().addMember(_user1.rln.get().commitment)
     console.log("User1 Registered")
   })
 
   createEffect(() => {
     // Add User2 to both registries
-    registry2().addMember(user2().commitment)
-    registry1().addMember(user2().commitment)
+    registry2().addMember(_user2.rln.get().commitment)
+    registry1().addMember(_user2.rln.get().commitment)
     console.log("User2 Registered")
   })
 
@@ -74,7 +68,7 @@ const App: Component = () => {
         <div class="user_left">
           <User
             index={1}
-            rlnInstance={user1}
+            rlnInstance={_user1.rln.get}
             userProof={user1proof}
             registryInstance={registry1}
             setUserProof={setUser1Proof}
@@ -86,7 +80,7 @@ const App: Component = () => {
         <div class="user_right">
           <User
             index={2}
-            rlnInstance={user2}
+            rlnInstance={_user2.rln.get}
             userProof={user2proof}
             registryInstance={registry2}
             setUserProof={setUser2Proof}
