@@ -1,12 +1,11 @@
 import { Component } from 'solid-js'
 import { createEffect } from 'solid-js'
-import { RLNFullProof } from 'rlnjs/dist/types/types'
 
 import './styles.css'
 import Control from './components/Control'
 import User from './components/user/User'
 import { users, addNewUser, addStatus } from './store/users'
-import { publishQueue } from './store/store'
+import { publishedMsgProofs, publishQueue, setPublishedMsgProofs } from './store/store'
 import PublishedMessages from './components/PublishedMessages'
 
 addNewUser();
@@ -41,8 +40,13 @@ const App: Component = () => {
       }
       console.log("Updating Caches")
 
-      addStatus(0, p as RLNFullProof)
-      addStatus(1, p as RLNFullProof)
+      addStatus(0, p.proof)
+      addStatus(1, p.proof)
+      const newPublishedMsgProofs =  {
+          message: p.message,
+          proof: p.proof
+      }
+      setPublishedMsgProofs([ ...publishedMsgProofs(), newPublishedMsgProofs ])
     }
   })
 

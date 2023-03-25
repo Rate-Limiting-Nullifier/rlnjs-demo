@@ -5,7 +5,7 @@ import { RLNFullProof, StrBigInt, VerificationKeyT } from 'rlnjs/dist/types/type
 
 import { objectToString } from '../utils'
 import vKey from '../zkeyFiles/verification_key.json'
-import { appID, publishedMsgProofs, PublishQueue, setPublishedMsgProofs } from './store'
+import { appID } from './store'
 
 export type UserType = {
     rln: rlnType
@@ -85,8 +85,7 @@ export const addNewUser = () => {
     users.push(user)
 }
 
-export const addStatus = (index: number, publishQueue: PublishQueue) => {
-    const { proof, message } = publishQueue
+export const addStatus = (index: number, proof: RLNFullProof) => {
     const user = users[index]
 
     const status = user.cache.get().addProof(proof)
@@ -99,9 +98,4 @@ export const addStatus = (index: number, publishQueue: PublishQueue) => {
         user.registry.get().slashMember( poseidon1([status.secret]) )
         user.registry.set( user.registry.get() )
     }
-    const newPublishedMsgProofs =  {
-        message,
-        proof
-    }
-    setPublishedMsgProofs([ ...publishedMsgProofs(), newPublishedMsgProofs ])
 }
