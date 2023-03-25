@@ -21,6 +21,6 @@ const User = ({ index }: Props) => {
             <Registry registry={registry} />
         </div>
     )
-  }
+}
 
-  export default User
+export default User

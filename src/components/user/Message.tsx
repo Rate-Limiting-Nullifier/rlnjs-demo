@@ -50,6 +50,6 @@ const Message = ({ rln, proof, registry }: Props) => {
             <textarea class="message proof" disabled={true} rows={4} value={ proof.get() || '' }></textarea>
         </div>
     )
-  }
+}
 
-  export default Message
+export default Message

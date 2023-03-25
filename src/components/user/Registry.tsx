@@ -5,22 +5,32 @@ export type Props = {
 }
 
 const RegistryComponent = ({ registry }: Props) => {
-  // TODO: check if registryInstance() is reloaded in handlePublish in Message.tsx
+  // TODO: check if registry.get() is reloaded in handlePublish in Message.tsx
   console.log(registry.get().members)
-    return (
-      <div class="container box">
-        <h3>Id Commitment Registry</h3>
-        <ul class="members">
-          {registry.get().members.map((member) => {
-            return (
-              <li class="bigint">
-                { member.toString() }
-              </li>
-            )
-          })}
-        </ul>
-      </div>
-    )
-  }
+  return (
+    <div class="container box">
+      <h3>Member Registry</h3>
+      <ul class="members">
+        {registry.get().members.map((member) => {
+          return (
+            <li class="bigint">
+              <span style="font-style:italic">MemberID:</span> {member == 0n ? <span class="breach" style="font-weight: bold">REMOVED</span> : <span>{member.toString()}</span>}
+            </li>
+          )
+        })}
+      </ul>
+      <h3>Slashed Registry</h3>
+      <ul class="members">
+        {registry.get().slashedMembers.map((member) => {
+          return (
+            <li class="bigint breach">
+              <span style="font-style:italic">MemberID:</span> {member.toString()}
+            </li>
+          )
+        })}
+      </ul>
+    </div>
+  )
+}
 
-  export default RegistryComponent
+export default RegistryComponent

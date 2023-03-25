@@ -32,6 +32,9 @@ const App: Component = () => {
     // Add proofs to the cache from the publish queue (starting from the end)
     while (publishQueue().length > 0) {
       const p = publishQueue().shift()
+      if (p == undefined) {
+        break
+      }
       console.log("Updating Caches")
 
       addStatus(0, p as RLNFullProof)
