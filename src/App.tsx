@@ -1,4 +1,4 @@
-import { Component, createSignal } from 'solid-js'
+import { Component } from 'solid-js'
 import { createEffect } from 'solid-js'
 import { RLNFullProof } from 'rlnjs/dist/types/types'
 
@@ -6,7 +6,8 @@ import './styles.css'
 import Control from './components/Control'
 import User from './components/user/User'
 import { users, addNewUser, addStatus } from './store/users'
-import { publishQueue, publishedMsgProofs } from './store/store'
+import { publishQueue } from './store/store'
+import PublishedMessages from './components/PublishedMessages'
 
 addNewUser();
 addNewUser();
@@ -55,20 +56,7 @@ const App: Component = () => {
         </div>
         <div class="controls">
           <Control/>
-          <div class="box">
-            <h3>
-              Published Messages
-            </h3>
-            {publishedMsgProofs().map((p) => {
-              return (
-                <div class="published_message">
-                  <div class="smallerint">Msg: {p.message}</div>
-                  <div class="smallerint">By: {p.proof.snarkProof.publicSignals.internalNullifier.toString()}</div>
-                  <div class="smallerint">Epoch: {p.proof.snarkProof.publicSignals.externalNullifier.toString()}</div>
-
-                </div>)
-            })}
-          </div>
+          <PublishedMessages/>
         </div>
         <div class="user_right">
           <User index={1} />
