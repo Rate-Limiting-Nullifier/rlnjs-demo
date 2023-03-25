@@ -1,11 +1,11 @@
+import { poseidon1 } from 'poseidon-lite'
 import { Registry, RLN, Cache } from 'rlnjs'
 import { Accessor, createSignal } from 'solid-js'
 import { RLNFullProof, StrBigInt, VerificationKeyT } from 'rlnjs/dist/types/types'
 
-import { appID } from './store'
 import { objectToString } from '../utils'
 import vKey from '../zkeyFiles/verification_key.json'
-
+import { appID, publishedMsgProofs, setPublishedMsgProofs } from './store'
 
 export type UserType = {
     rln: rlnType
@@ -93,4 +93,14 @@ export const addStatus = (index: number, proof: RLNFullProof) => {
 
     user.status.set(newStatus)
     user.cache.set(user.cache.get())
+
+    if (status.secret){
+        user.registry.get().slashMember( poseidon1([status.secret]) )
+        user.registry.set( user.registry.get() )
+    }
+    const newPublishedMsgProofs =  {
+        message:'TODO: define this value',
+        proof: proof
+    }
+    setPublishedMsgProofs([ ...publishedMsgProofs(), newPublishedMsgProofs ])
 }

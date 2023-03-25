@@ -1,4 +1,4 @@
-import type { Component } from 'solid-js'
+import { Component, createSignal } from 'solid-js'
 import { createEffect } from 'solid-js'
 import { RLNFullProof } from 'rlnjs/dist/types/types'
 
@@ -6,12 +6,15 @@ import './styles.css'
 import Control from './components/Control'
 import User from './components/user/User'
 import { users, addNewUser, addStatus } from './store/users'
-import { publishQueue } from './store/store'
+import { publishQueue, publishedMsgProofs } from './store/store'
 
 addNewUser();
 addNewUser();
 const user1 = users[0];
 const user2 = users[1];
+
+
+
 
 const App: Component = () => {
   createEffect(() => {
@@ -50,7 +53,23 @@ const App: Component = () => {
         <div class="user_left">
           <User index={0} />
         </div>
-        <Control/>
+        <div class="controls">
+          <Control/>
+          <div class="box">
+            <h3>
+              Published Messages
+            </h3>
+            {publishedMsgProofs().map((p) => {
+              return (
+                <div class="published_message">
+                  <div class="smallerint">Msg: {p.message}</div>
+                  <div class="smallerint">By: {p.proof.snarkProof.publicSignals.internalNullifier.toString()}</div>
+                  <div class="smallerint">Epoch: {p.proof.snarkProof.publicSignals.externalNullifier.toString()}</div>
+
+                </div>)
+            })}
+          </div>
+        </div>
         <div class="user_right">
           <User index={1} />
         </div>
