@@ -5,7 +5,7 @@ import { RLNFullProof, StrBigInt, VerificationKeyT } from 'rlnjs/dist/types/type
 
 import { objectToString } from '../utils'
 import vKey from '../zkeyFiles/verification_key.json'
-import { appID, publishedMsgProofs, setPublishedMsgProofs } from './store'
+import { appID, publishedMsgProofs, PublishQueue, setPublishedMsgProofs } from './store'
 
 export type UserType = {
     rln: rlnType
@@ -85,7 +85,8 @@ export const addNewUser = () => {
     users.push(user)
 }
 
-export const addStatus = (index: number, proof: RLNFullProof) => {
+export const addStatus = (index: number, publishQueue: PublishQueue) => {
+    const { proof, message } = publishQueue
     const user = users[index]
 
     const status = user.cache.get().addProof(proof)
@@ -99,8 +100,8 @@ export const addStatus = (index: number, proof: RLNFullProof) => {
         user.registry.set( user.registry.get() )
     }
     const newPublishedMsgProofs =  {
-        message:'TODO: define this value',
-        proof: proof
+        message,
+        proof
     }
     setPublishedMsgProofs([ ...publishedMsgProofs(), newPublishedMsgProofs ])
 }

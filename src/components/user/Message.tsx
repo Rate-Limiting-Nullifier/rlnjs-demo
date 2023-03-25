@@ -34,7 +34,11 @@ const Message = ({ rln, proof, registry }: Props) => {
 
       proof.set("Message: '" + message() + "'\n" + "Proof: " + objectToString(fullProof))
       console.log("Publishing Proof")
-      setPublishQueue([ ...publishQueue(), fullProof ])
+      const newPublishQueue = {
+        message: message(),
+        proof: fullProof,
+      }
+      setPublishQueue([ ...publishQueue(), newPublishQueue ])
 
       setDisableButton(false)
     }
