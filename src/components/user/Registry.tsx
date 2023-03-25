@@ -1,18 +1,17 @@
-import { Registry } from "rlnjs"
-import { Accessor } from "solid-js"
+import { registryType } from "../../store/users"
 
 export type Props = {
-    registryInstance: Accessor<Registry>
+    registry: registryType
 }
 
-const RegistryComponent = ({ registryInstance }: Props) => {
+const RegistryComponent = ({ registry }: Props) => {
   // TODO: check if registryInstance() is reloaded in handlePublish in Message.tsx
-  console.log(registryInstance().members)
+  console.log(registry.get().members)
     return (
       <div class="container box">
         <h3>Id Commitment Registry</h3>
         <ul class="members">
-          {registryInstance().members.map((member) => {
+          {registry.get().members.map((member) => {
             return (
               <li class="bigint">
                 { member.toString() }

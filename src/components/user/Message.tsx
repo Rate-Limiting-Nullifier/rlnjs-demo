@@ -1,17 +1,16 @@
-import { Registry, RLN, StrBigInt } from "rlnjs"
-import { Accessor, createSignal } from "solid-js"
-import { epoch } from "../../store/store"
+import { StrBigInt } from "rlnjs"
+import { createSignal } from "solid-js"
+import { ProofType, registryType, rlnType } from "../../store/users"
 import { objectToString } from "../../utils"
+import { epoch, publishQueue, setPublishQueue } from "../../store/store"
 
 export type Props = {
-    rlnInstance: Accessor<RLN>
-    userProof: Accessor<string | null>
-    setUserProof: (userProof: string) => {}
-    publishProof: (fullProof: any) => void
-    registryInstance: Accessor<Registry>
+    rln: rlnType
+    proof: ProofType
+    registry: registryType
 }
 
-const Message = ({ rlnInstance, userProof, setUserProof, publishProof, registryInstance }: Props) => {
+const Message = ({ rln, proof, registry }: Props) => {
     const [message, setMessage] = createSignal<string>("Put your message here")
     const [disableButton, setDisableButton] = createSignal<boolean>(false)
 
@@ -19,17 +18,23 @@ const Message = ({ rlnInstance, userProof, setUserProof, publishProof, registryI
       setMessage(target.value.toString())
     }
 
-    const handlePublish = () => {
+    const handlePublish = async () => {
       setDisableButton(true)
 
       console.log("handlePublish Message: " + message())
-      rlnInstance().generateProof(message(),
-      registryInstance().generateMerkleProof(rlnInstance().commitment),
-        epoch() as StrBigInt).then(
-          (fullProof: any) => {
-            setUserProof("Message: '" + message() + "'\n" + "Proof: " + objectToString(fullProof))
-            publishProof(fullProof)
-          })
+      const merkleProof = registry.get().generateMerkleProof( rln.get().commitment )
+      const fullProof = await rln.get().generateProof(
+        message(),
+        merkleProof,
+        epoch() as StrBigInt
+      )
+
+      registry.set( registry.get() )
+      rln.set( rln.get() )
+
+      proof.set("Message: '" + message() + "'\n" + "Proof: " + objectToString(fullProof))
+      console.log("Publishing Proof")
+      setPublishQueue([ ...publishQueue(), fullProof ])
 
       setDisableButton(false)
     }
@@ -42,7 +47,7 @@ const Message = ({ rlnInstance, userProof, setUserProof, publishProof, registryI
                 { disableButton() ? 'Publishing' : 'Publish Message' }
             </button>
             <h3>Proof</h3>
-            <textarea class="message proof" disabled={true} rows={4} value={ userProof() || '' }></textarea>
+            <textarea class="message proof" disabled={true} rows={4} value={ proof.get() || '' }></textarea>
         </div>
     )
   }

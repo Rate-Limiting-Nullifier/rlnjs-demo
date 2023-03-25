@@ -1,27 +1,46 @@
 import { Registry, RLN, Cache } from 'rlnjs'
 import { Accessor, createSignal } from 'solid-js'
-import { StrBigInt, VerificationKeyT } from 'rlnjs/dist/types/types'
+import { RLNFullProof, StrBigInt, VerificationKeyT } from 'rlnjs/dist/types/types'
 
 import { appID } from './store'
+import { objectToString } from '../utils'
 import vKey from '../zkeyFiles/verification_key.json'
 
 
-type User = {
-    rln: {
-        get: Accessor<RLN>
-        set: (rln: RLN) => void
-    }
-    registry: {
-        get: Accessor<Registry>
-        set: (registry: Registry) => void
-    }
-    cache: {
-        get: Accessor<Cache>
-        set: (cache: Cache) => void
-    }
+export type UserType = {
+    rln: rlnType
+    registry: registryType
+    cache: cacheType
+    status: statusType
+    proof: ProofType
 }
 
-export const users: User[] = []
+export type rlnType = {
+    get: Accessor<RLN>
+    set: (rln: RLN) => void
+}
+
+export type registryType = {
+    get: Accessor<Registry>
+    set: (registry: Registry) => void
+}
+
+export type cacheType = {
+    get: Accessor<Cache>
+    set: (cache: Cache) => void
+}
+
+export type statusType = {
+    get: Accessor<string[]>
+    set: (status: string[]) => void
+}
+
+export type ProofType = {
+    get: Accessor<string|null>
+    set: (proof: string) => void
+}
+
+export const users: UserType[] = []
 
 export const addNewUser = () => {
     // create user objects
@@ -38,6 +57,8 @@ export const addNewUser = () => {
     const [rln, setRln] = createSignal(_rln)
     const [registry, setRegistry] = createSignal(_registry)
     const [cache, setCache] = createSignal(_cache)
+    const [status, setStatus] = createSignal([])
+    const [proof, setProof] = createSignal(null)
 
     const user = {
         rln: {
@@ -51,7 +72,25 @@ export const addNewUser = () => {
         cache: {
             get: cache,
             set: setCache,
+        },
+        status: {
+            get: status,
+            set: setStatus,
+        },
+        proof: {
+            get: proof,
+            set: setProof,
         }
     }
     users.push(user)
+}
+
+export const addStatus = (index: number, proof: RLNFullProof) => {
+    const user = users[index]
+
+    const status = user.cache.get().addProof(proof)
+    const newStatus = [...user.status.get(), objectToString(status)]
+
+    user.status.set(newStatus)
+    user.cache.set(user.cache.get())
 }

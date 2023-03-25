@@ -1,24 +1,17 @@
 import type { Component } from 'solid-js'
-import { createSignal, createEffect } from 'solid-js'
+import { createEffect } from 'solid-js'
 import { RLNFullProof } from 'rlnjs/dist/types/types'
 
 import './styles.css'
-import { objectToString } from './utils'
 import Control from './components/Control'
 import User from './components/user/User'
-import { users, addNewUser } from './store/users'
-import { appID, publishQueue, setPublishQueue } from './store/store'
+import { users, addNewUser, addStatus } from './store/users'
+import { publishQueue } from './store/store'
 
 addNewUser();
 addNewUser();
 const user1 = users[0];
 const user2 = users[1];
-
-const [statusUser1, setStatusUser1] = createSignal<string[]>([]) // User 1's Status
-const [statusUser2, setStatusUser2] = createSignal<string[]>([]) // User 2's Status
-const [user1proof, setUser1Proof] = createSignal<string | null>(null) // User 1's Last Proof as a string
-const [user2proof, setUser2Proof] = createSignal<string | null>(null) // User 2's Last Proof as a string
-
 
 const App: Component = () => {
   createEffect(() => {
@@ -36,27 +29,15 @@ const App: Component = () => {
   })
 
   createEffect(() => {
-    // Add proofs to the cache from the publish queue
+    // Add proofs to the cache from the publish queue (starting from the end)
     while (publishQueue().length > 0) {
       const p = publishQueue().shift()
       console.log("Updating Caches")
 
-      const status1 = user1.cache.get().addProof(p as RLNFullProof)
-      setStatusUser1([...statusUser1(), objectToString(status1)])
-      user1.cache.set(user1.cache.get())
-
-
-      const status2 = user2.cache.get().addProof(p as RLNFullProof)
-      setStatusUser2([...statusUser2(), objectToString(status2)])
-      user2.cache.set(user2.cache.get())
+      addStatus(0, p as RLNFullProof)
+      addStatus(1, p as RLNFullProof)
     }
   })
-
-  const publishProof = (fullProof: RLNFullProof) => {
-    console.log("Publishing Proof")
-    // Add proof to the publish queue
-    setPublishQueue([...publishQueue(), fullProof])
-  }
 
   return (
     <div class="App">
@@ -64,27 +45,11 @@ const App: Component = () => {
       <hr />
       <div class="columns">
         <div class="user_left">
-          <User
-            index={1}
-            rlnInstance={user1.rln.get}
-            userProof={user1proof}
-            registryInstance={user1.registry.get}
-            setUserProof={setUser1Proof}
-            publishProof={publishProof}
-            status={statusUser1}
-          />
+          <User index={0} />
         </div>
         <Control/>
         <div class="user_right">
-          <User
-            index={2}
-            rlnInstance={user2.rln.get}
-            userProof={user2proof}
-            registryInstance={user2.registry.get}
-            setUserProof={setUser2Proof}
-            publishProof={publishProof}
-            status={statusUser2}
-          />
+          <User index={1} />
         </div>
       </div>
     </div >
