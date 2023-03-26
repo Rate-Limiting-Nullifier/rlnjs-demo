@@ -53,6 +53,16 @@ export const addNewUser = () => {
     const _registry = new Registry()
     const _cache = new Cache(appID() as StrBigInt)
 
+    // register user itself
+    _registry.addMember(_rln.commitment)
+    users.forEach((existingUser) => {
+        // new user
+        _registry.addMember(existingUser.rln.get().commitment)
+        // existing user
+        existingUser.registry.get().addMember(_rln.commitment)
+        existingUser.registry.set( existingUser.registry.get() )
+    })
+
     // use reactive states
     const [rln, setRln] = createSignal(_rln)
     const [registry, setRegistry] = createSignal(_registry)
