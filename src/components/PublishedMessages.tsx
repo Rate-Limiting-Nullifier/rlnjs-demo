@@ -1,6 +1,27 @@
-import { publishedMsgProofs } from "../store/store"
+import { createEffect } from "solid-js"
+import { addStatus } from "../store/users"
+import { publishedMsgProofs, publishQueue, setPublishedMsgProofs } from "../store/store"
 
 const PublishedMessages = () => {
+  createEffect(() => {
+    // Add proofs to the cache from the publish queue (starting from the end)
+    while (publishQueue().length > 0) {
+      const p = publishQueue().shift()
+      if (p == undefined) {
+        break
+      }
+      console.log("Updating Caches")
+
+      addStatus(0, p.proof)
+      addStatus(1, p.proof)
+      const newPublishedMsgProofs =  {
+          message: p.message,
+          proof: p.proof
+      }
+      setPublishedMsgProofs([ ...publishedMsgProofs(), newPublishedMsgProofs ])
+    }
+  })
+
   return (
     <div class="box">
         <h3>

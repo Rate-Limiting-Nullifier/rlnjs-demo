@@ -5,8 +5,6 @@ export type Props = {
 }
 
 const RegistryComponent = ({ registry }: Props) => {
-  // TODO: check if registry.get() is reloaded in handlePublish in Message.tsx
-  console.log(registry.get().members)
   return (
     <div class="container box">
       <h3>Member Registry</h3>
