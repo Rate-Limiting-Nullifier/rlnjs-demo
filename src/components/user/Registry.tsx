@@ -1,18 +1,17 @@
-import { Registry } from "rlnjs"
-import { Accessor } from "solid-js"
+import { registryType } from "../../store/users"
 
 export type Props = {
-  registryInstance: Accessor<Registry>
+    registry: registryType
 }
 
-const RegistryComponent = ({ registryInstance }: Props) => {
-  // TODO: check if registryInstance() is reloaded in handlePublish in Message.tsx
-  console.log(registryInstance().members)
+const RegistryComponent = ({ registry }: Props) => {
+  // TODO: check if registry.get() is reloaded in handlePublish in Message.tsx
+  console.log(registry.get().members)
   return (
     <div class="container box">
       <h3>Member Registry</h3>
       <ul class="members">
-        {registryInstance().members.map((member) => {
+        {registry.get().members.map((member) => {
           return (
             <li class="bigint">
               <span style="font-style:italic">MemberID:</span> {member == 0n ? <span class="breach" style="font-weight: bold">REMOVED</span> : <span>{member.toString()}</span>}
@@ -22,7 +21,7 @@ const RegistryComponent = ({ registryInstance }: Props) => {
       </ul>
       <h3>Slashed Registry</h3>
       <ul class="members">
-        {registryInstance().slashedMembers.map((member) => {
+        {registry.get().slashedMembers.map((member) => {
           return (
             <li class="bigint breach">
               <span style="font-style:italic">MemberID:</span> {member.toString()}

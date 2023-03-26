@@ -1,88 +1,54 @@
-import { createSignal, createEffect } from 'solid-js'
-import type { Component } from 'solid-js'
-import { objectToString } from './utils'
+import { Component } from 'solid-js'
+import { createEffect } from 'solid-js'
 
-import vKey from './zkeyFiles/verification_key.json'
 import './styles.css'
-
-import { RLN, Registry, Cache } from 'rlnjs'
-import { StrBigInt, VerificationKeyT, RLNFullProof } from 'rlnjs/dist/types/types'
 import Control from './components/Control'
 import User from './components/user/User'
-import { poseidon1 } from 'poseidon-lite'
+import { users, addNewUser, addStatus } from './store/users'
+import { publishedMsgProofs, publishQueue, setPublishedMsgProofs } from './store/store'
+import PublishedMessages from './components/PublishedMessages'
 
-// Getters & Setters for all RLNjs objects
-const [appID, setAppID] = createSignal<BigInt>(BigInt(1234567890)) // RLN_Identifier
-const [epoch, setEpoch] = createSignal<BigInt>(BigInt(1)) // Epoch
+addNewUser();
+addNewUser();
+const user1 = users[0];
+const user2 = users[1];
 
-// TODO: design for N users
-const [user1, setUser1] = createSignal<RLN>(await createRLNInstance(appID()).then(
-  (_rln) => _rln
-)) // User 1's RLN instance
-const [user2, setUser2] = createSignal<RLN>(await createRLNInstance(appID()).then(
-  (_rln) => _rln
-)) // User 2's RLN instance
-const [registry1, setRegistry1] = createSignal<Registry>(new Registry()) // User 1's Registry
-const [registry2, setRegistry2] = createSignal<Registry>(new Registry()) // User 2's Registry
-const [cache1, setCache1] = createSignal<Cache>(new Cache(appID() as StrBigInt)) // User 1's Cache
-const [cache2, setCache2] = createSignal<Cache>(new Cache(appID() as StrBigInt)) // User 2's Cache
-const [statusUser1, setStatusUser1] = createSignal<string[]>([]) // User 1's Status
-const [statusUser2, setStatusUser2] = createSignal<string[]>([]) // User 2's Status
-const [user1proof, setUser1Proof] = createSignal<string | null>(null) // User 1's Last Proof as a string
-const [user2proof, setUser2Proof] = createSignal<string | null>(null) // User 2's Last Proof as a string
-const [publishQueue, setPublishQueue] = createSignal<{ message: string, proof: RLNFullProof }[]>([]) // Queue of proofs to be published
-const [publishedMsgProofs, setPublishedMsgProofs] = createSignal<{ message: string, proof: RLNFullProof }[]>([]) // List of published proofs
 
-async function createRLNInstance(app_identifier: BigInt): Promise<RLN> {
-  return new RLN('/src/zkeyFiles/rln.wasm', '/src/zkeyFiles/rln_final.zkey', vKey as VerificationKeyT, app_identifier as bigint)
-}
+
 
 const App: Component = () => {
   createEffect(() => {
     // Add User1 to both registries
-    registry1().addMember(user1().commitment)
-    registry2().addMember(user1().commitment)
+    user1.registry.get().addMember(user1.rln.get().commitment)
+    user2.registry.get().addMember(user1.rln.get().commitment)
     console.log("User1 Registered")
   })
 
   createEffect(() => {
     // Add User2 to both registries
-    registry2().addMember(user2().commitment)
-    registry1().addMember(user2().commitment)
+    user2.registry.get().addMember(user2.rln.get().commitment)
+    user1.registry.get().addMember(user2.rln.get().commitment)
     console.log("User2 Registered")
   })
 
   createEffect(() => {
-    // Add proofs to the cache from the publish queue
+    // Add proofs to the cache from the publish queue (starting from the end)
     while (publishQueue().length > 0) {
       const p = publishQueue().shift()
       if (p == undefined) {
         break
       }
       console.log("Updating Caches")
-      const status1 = cache1().addProof(p.proof as RLNFullProof)
-      setStatusUser1([...statusUser1(), objectToString(status1)])
-      const status2 = cache2().addProof(p.proof as RLNFullProof)
-      setStatusUser2([...statusUser2(), objectToString(status2)])
-      setCache1(cache1())
-      setCache2(cache2())
-      if (status1.secret) {
-        registry1().slashMember(poseidon1([status1.secret]))
-        setRegistry1(registry1())
+
+      addStatus(0, p.proof)
+      addStatus(1, p.proof)
+      const newPublishedMsgProofs =  {
+          message: p.message,
+          proof: p.proof
       }
-      if (status2.secret) {
-        registry2().slashMember(poseidon1([status2.secret]))
-        setRegistry2(registry2())
-      }
-      setPublishedMsgProofs([...publishedMsgProofs(), p])
+      setPublishedMsgProofs([ ...publishedMsgProofs(), newPublishedMsgProofs ])
     }
   })
-
-  const publishProof = (msgProof: { message: string, proof: RLNFullProof }) => {
-    console.log("Publishing Proof")
-    // Add proof to the publish queue
-    setPublishQueue([...publishQueue(), msgProof])
-  }
 
   return (
     <div class="App">
@@ -90,50 +56,14 @@ const App: Component = () => {
       <hr />
       <div class="columns">
         <div class="user_left">
-          <User
-            index={1}
-            epoch={epoch}
-            rlnInstance={user1}
-            userProof={user1proof}
-            registryInstance={registry1}
-            setUserProof={setUser1Proof}
-            publishProof={publishProof}
-            status={statusUser1}
-          />
+          <User index={0} />
         </div>
         <div class="controls">
-          <Control
-            setAppID={setAppID}
-            appID={appID}
-            setEpoch={setEpoch}
-            epoch={epoch}
-          />
-          <div class="box">
-            <h3>
-              Published Messages
-            </h3>
-            {publishedMsgProofs().map((p) => {
-              return (
-                <div class="published_message">
-                  <div class="smallerint">Msg: {p.message}</div>
-                  <div class="smallerint">By: {p.proof.snarkProof.publicSignals.internalNullifier.toString()}</div>
-                  <div class="smallerint">Epoch: {p.proof.snarkProof.publicSignals.externalNullifier.toString()}</div>
-
-                </div>)
-            })}
-          </div>
+          <Control/>
+          <PublishedMessages/>
         </div>
         <div class="user_right">
-          <User
-            index={2}
-            epoch={epoch}
-            rlnInstance={user2}
-            userProof={user2proof}
-            registryInstance={registry2}
-            setUserProof={setUser2Proof}
-            publishProof={publishProof}
-            status={statusUser2}
-          />
+          <User index={1} />
         </div>
       </div>
     </div >

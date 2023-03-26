@@ -1,29 +1,24 @@
-import Message, { Props as PropsMessage } from "./Message"
-import Cache, { Props as PropsCache } from "./Cache"
-import Registry, { Props as PropsRegistry } from "./Registry"
+import { users } from "../../store/users"
+import Cache from "./Cache"
+import Message from "./Message"
+import Registry from "./Registry"
 
 type Props = {
     index: number
-} & PropsMessage & PropsCache & PropsRegistry
+}
 
-const User = ({ index, epoch, rlnInstance, userProof, setUserProof, publishProof, registryInstance, status }: Props) => {
+const User = ({ index }: Props) => {
+    const { rln, registry, status, proof } = users[index];
     return (
         <div>
-            <h2>User {index}</h2>
+            <h2>User { index + 1 }</h2>
             <Message
-                epoch={epoch}
-                rlnInstance={rlnInstance}
-                userProof={userProof}
-                registryInstance={registryInstance}
-                setUserProof={setUserProof}
-                publishProof={publishProof}
+                rln={rln}
+                proof={proof}
+                registry={registry}
             />
-            <Registry
-                registryInstance={registryInstance}
-            />
-            <Cache
-                status={status}
-            />
+            <Cache status={status.get} />
+            <Registry registry={registry} />
         </div>
     )
 }
