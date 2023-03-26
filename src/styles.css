@@ -137,6 +137,7 @@ button {
 }
 
 .message {
+  color: white;
   padding: 0.5rem;
   width: calc(100% - 1rem);
 }
@@ -212,8 +213,13 @@ button {
   width: 32ch;
 }
 
-.publishButton {
+.publish_button {
   font-weight: bold;
+}
+
+.other_users_title {
+  width: 100%;
+  display: inline-flex;
 }
 
 .published_message {

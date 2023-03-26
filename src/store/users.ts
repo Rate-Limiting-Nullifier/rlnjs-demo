@@ -40,7 +40,7 @@ export type ProofType = {
     set: (proof: string) => void
 }
 
-export const users: UserType[] = []
+export const [users, setUsers] = createSignal<UserType[]>([])
 
 export const addNewUser = () => {
     // create user objects
@@ -55,7 +55,7 @@ export const addNewUser = () => {
 
     // register user itself
     _registry.addMember(_rln.commitment)
-    users.forEach((existingUser) => {
+    users().forEach((existingUser, i) => {
         // new user
         _registry.addMember(existingUser.rln.get().commitment)
         // existing user
@@ -92,11 +92,11 @@ export const addNewUser = () => {
             set: setProof,
         }
     }
-    users.push(user)
+    setUsers([ ...users(), user ])
 }
 
 export const addStatus = (index: number, proof: RLNFullProof) => {
-    const user = users[index]
+    const user = users()[index]
 
     const status = user.cache.get().addProof(proof)
     const newStatus = [...user.status.get(), objectToString(status)]

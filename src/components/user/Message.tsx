@@ -11,7 +11,7 @@ export type Props = {
 }
 
 const Message = ({ rln, proof, registry }: Props) => {
-    const [message, setMessage] = createSignal<string>("Put your message here")
+    const [message, setMessage] = createSignal<string>("")
     const [disableButton, setDisableButton] = createSignal<boolean>(false)
 
     const handleChange = ({ target }) => {
@@ -46,8 +46,13 @@ const Message = ({ rln, proof, registry }: Props) => {
     return (
         <div class="message_container box">
             <h3>Message</h3>
-            <textarea class="message" value={ message() } onChange={handleChange}></textarea>
-            <button type="button" class="publishButton" onClick={handlePublish} disabled={ disableButton() }>
+            <textarea
+              class="message"
+              value={ message() }
+              onChange={handleChange}
+              placeholder={"Put your message here"}
+            ></textarea>
+            <button type="button" class="publish_button" onClick={handlePublish} disabled={ disableButton() }>
                 { disableButton() ? 'Publishing' : 'Publish Message' }
             </button>
             <h3>Proof</h3>

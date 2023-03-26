@@ -4,6 +4,7 @@ import './styles.css'
 import Control from './components/Control'
 import User from './components/user/User'
 import { addNewUser } from './store/users'
+import OtherUsers from './components/OtherUsers'
 import PublishedMessages from './components/PublishedMessages'
 
 addNewUser();
@@ -17,15 +18,14 @@ const App: Component = () => {
       <hr />
       <div class="columns">
         <div class="user_left">
+          <h2>Current user</h2>
           <User index={0} />
         </div>
         <div class="controls">
           <Control/>
           <PublishedMessages/>
         </div>
-        <div class="user_right">
-          <User index={1} />
-        </div>
+        <OtherUsers/>
       </div>
     </div >
   )
