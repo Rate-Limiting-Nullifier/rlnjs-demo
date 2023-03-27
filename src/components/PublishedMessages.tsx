@@ -1,5 +1,5 @@
 import { createEffect } from "solid-js"
-import { addStatus } from "../store/users"
+import { addStatus, users } from "../store/users"
 import { publishedMsgProofs, publishQueue, setPublishedMsgProofs } from "../store/store"
 
 const PublishedMessages = () => {
@@ -12,8 +12,11 @@ const PublishedMessages = () => {
       }
       console.log("Updating Caches")
 
-      addStatus(0, p.proof)
-      addStatus(1, p.proof)
+
+      users.map((_, index) => {
+        addStatus(index, p.proof)
+      })
+
       const newPublishedMsgProofs =  {
           message: p.message,
           proof: p.proof
