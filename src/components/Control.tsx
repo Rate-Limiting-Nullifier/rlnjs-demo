@@ -1,11 +1,11 @@
 import { appID, epoch, setAppID, setEpoch } from '../store/store'
 
 const Control = () => {
-    const handleIdentifierChange = ({ target }) => {
-      const inputValue = target.value
-      const newIdentifier = BigInt(inputValue)
-      setAppID(newIdentifier)
-    }
+  const handleIdentifierChange = ({ target }) => {
+    const inputValue = target.value
+    const newIdentifier = BigInt(inputValue)
+    setAppID(newIdentifier)
+  }
 
   const incrementEpoch = () => {
     const newEpoch = BigInt(epoch() as bigint) + BigInt(1)
@@ -24,12 +24,11 @@ const Control = () => {
       <h2>App Controls</h2>
       <div class='box'>
         <div class='input'>
-          <label>App ID:</label>
-          <input type="number" value={appID().toString()} onChange={handleIdentifierChange}></input>
-          <small>Changing the App ID will reset the cache.</small>
+          <h3 style="text-decoration: underline">RLN App ID:</h3>
+          <h2>{appID().toString()}</h2>
         </div>
         <div class='input'>
-          <label>Epoch:</label>
+          <h3 style="text-decoration: underline">Epoch:</h3>
           <h2>{epoch().toString()}</h2>
         </div>
         <div class="plusminus">

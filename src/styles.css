@@ -140,9 +140,30 @@ button {
   padding: 0.5rem;
   width: calc(100% - 1rem);
 }
+
 .message:disabled{
   color: white;
 }
+
+.message_input {
+  display: grid;
+  grid-template-columns: 5fr 1fr;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  flex-direction: column;
+  margin-block: 1.125rem;
+}
+
+.message_input textarea {
+  height: 3rem;
+}
+
+.message_input button {
+  height: 100%;
+  font-size: 0.9rem;
+}
+
 .input {
   display: flex;
   flex-direction: column;
@@ -168,6 +189,18 @@ button {
   grid-template-columns: 1fr 1fr;
   gap: 0.5rem;
   margin-block: 0.5rem;
+}
+
+.plusminus {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  margin-block: 0.5rem;
+}
+
+.plusminus button {
+  font-weight: 600;
+  font-size: 1.25rem;
 }
 
 .members {
