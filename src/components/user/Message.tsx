@@ -28,7 +28,8 @@ const Message = ({ index }: Props) => {
         merkleProof,
         epoch() as StrBigInt
       )
-      setUsers(index, user)
+      setUsers(index, "registry", user.registry)
+      setUsers(index, "rln", user.rln)
       setUsers(index, "proof", "Message: '" + message() + "'\n" + "Proof: " + objectToString(fullProof))
 
 
