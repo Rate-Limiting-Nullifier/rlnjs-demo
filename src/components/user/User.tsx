@@ -8,7 +8,7 @@ type Props = {
 }
 
 const User = ({ index }: Props) => {
-    const { rln, registry, status, proof } = users()[index];
+    const { rln, registry, status, proof } = users[index];
     return (
         <div>
             <h2>User { index + 1 }</h2>

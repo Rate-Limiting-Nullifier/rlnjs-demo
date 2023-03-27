@@ -1,6 +1,7 @@
+import { Accessor, createSignal } from 'solid-js'
 import { poseidon1 } from 'poseidon-lite'
 import { Registry, RLN, Cache } from 'rlnjs'
-import { Accessor, createSignal } from 'solid-js'
+import { createStore } from 'solid-js/store'
 import { RLNFullProof, StrBigInt, VerificationKeyT } from 'rlnjs/dist/types/types'
 
 import { objectToString } from '../utils'
@@ -40,7 +41,7 @@ export type ProofType = {
     set: (proof: string) => void
 }
 
-export const [users, setUsers] = createSignal<UserType[]>([])
+export const [users, setUsers] = createStore<UserType[]>([])
 
 export const addNewUser = () => {
     // create user objects
@@ -55,7 +56,7 @@ export const addNewUser = () => {
 
     // register user itself
     _registry.addMember(_rln.commitment)
-    users().forEach((existingUser, i) => {
+    users.forEach((existingUser, i) => {
         // new user
         _registry.addMember(existingUser.rln.get().commitment)
         // existing user
@@ -92,11 +93,11 @@ export const addNewUser = () => {
             set: setProof,
         }
     }
-    setUsers([ ...users(), user ])
+    setUsers(users.length, user)
 }
 
 export const addStatus = (index: number, proof: RLNFullProof) => {
-    const user = users()[index]
+    const user = users[index]
 
     const status = user.cache.get().addProof(proof)
     const newStatus = [...user.status.get(), objectToString(status)]

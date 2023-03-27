@@ -10,13 +10,13 @@ const OtherUsers = () => {
     return (
         <div class="user_right">
             <div class="other_users_title">
-                <h2>Other users {users().length} </h2>
+                <h2>Other users {users.length} </h2>
                 <button type="button" onClick={handleClick}>
                     Add User
                 </button>
             </div>
             <ul>
-                {users().map((_, index) => (
+                {users.map((_, index) => (
                     index > 0 ? <User index={index} /> : null
                 ))}
             </ul>
