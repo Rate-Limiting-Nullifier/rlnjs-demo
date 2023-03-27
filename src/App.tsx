@@ -7,11 +7,11 @@ import { addNewUser } from './store/users'
 import OtherUsers from './components/OtherUsers'
 import PublishedMessages from './components/PublishedMessages'
 
-addNewUser();
-addNewUser();
 
 
 const App: Component = () => {
+  addNewUser();
+  addNewUser();
   return (
     <div class="App">
       <h1 class="title">RLNjs Demo</h1>

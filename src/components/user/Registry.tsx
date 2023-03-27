@@ -1,15 +1,15 @@
-import { registryType } from "../../store/users"
+import { users } from "../../store/users"
 
 export type Props = {
-    registry: registryType
+  index: number
 }
 
-const RegistryComponent = ({ registry }: Props) => {
+const RegistryComponent = ({ index }: Props) => {
   return (
     <div class="container box">
       <h3>Member Registry</h3>
       <ul class="members">
-        {registry.get().members.map((member) => {
+        {users[index].registry.members.map((member) => {
           return (
             <li class="bigint">
               <span style="font-style:italic">MemberID:</span> {member == 0n ? <span class="breach" style="font-weight: bold">REMOVED</span> : <span>{member.toString()}</span>}
@@ -19,7 +19,7 @@ const RegistryComponent = ({ registry }: Props) => {
       </ul>
       <h3>Slashed Registry</h3>
       <ul class="members">
-        {registry.get().slashedMembers.map((member) => {
+        {users[index].registry.slashedMembers.map((member) => {
           return (
             <li class="bigint breach">
               <span style="font-style:italic">MemberID:</span> {member.toString()}

@@ -1,44 +1,18 @@
-import { Accessor, createSignal } from 'solid-js'
 import { poseidon1 } from 'poseidon-lite'
 import { Registry, RLN, Cache } from 'rlnjs'
 import { createStore } from 'solid-js/store'
 import { RLNFullProof, StrBigInt, VerificationKeyT } from 'rlnjs/dist/types/types'
 
-import { objectToString } from '../utils'
 import vKey from '../zkeyFiles/verification_key.json'
 import { appID } from './store'
+import { EvaluatedProof } from 'rlnjs/dist/types/cache'
 
 export type UserType = {
-    rln: rlnType
-    registry: registryType
-    cache: cacheType
-    status: statusType
-    proof: ProofType
-}
-
-export type rlnType = {
-    get: Accessor<RLN>
-    set: (rln: RLN) => void
-}
-
-export type registryType = {
-    get: Accessor<Registry>
-    set: (registry: Registry) => void
-}
-
-export type cacheType = {
-    get: Accessor<Cache>
-    set: (cache: Cache) => void
-}
-
-export type statusType = {
-    get: Accessor<string[]>
-    set: (status: string[]) => void
-}
-
-export type ProofType = {
-    get: Accessor<string|null>
-    set: (proof: string) => void
+    rln: RLN
+    registry: Registry
+    cache: Cache
+    status: EvaluatedProof[]
+    proof: string|null
 }
 
 export const [users, setUsers] = createStore<UserType[]>([])
@@ -58,40 +32,18 @@ export const addNewUser = () => {
     _registry.addMember(_rln.commitment)
     users.forEach((existingUser, i) => {
         // new user
-        _registry.addMember(existingUser.rln.get().commitment)
+        _registry.addMember(existingUser.rln.commitment)
         // existing user
-        existingUser.registry.get().addMember(_rln.commitment)
-        existingUser.registry.set( existingUser.registry.get() )
+        existingUser.registry.addMember(_rln.commitment)
+        setUsers(i, existingUser)
     })
 
-    // use reactive states
-    const [rln, setRln] = createSignal(_rln)
-    const [registry, setRegistry] = createSignal(_registry)
-    const [cache, setCache] = createSignal(_cache)
-    const [status, setStatus] = createSignal([])
-    const [proof, setProof] = createSignal(null)
-
     const user = {
-        rln: {
-            get: rln,
-            set: setRln,
-        },
-        registry: {
-            get: registry,
-            set: setRegistry,
-        },
-        cache: {
-            get: cache,
-            set: setCache,
-        },
-        status: {
-            get: status,
-            set: setStatus,
-        },
-        proof: {
-            get: proof,
-            set: setProof,
-        }
+        rln: _rln,
+        registry: _registry,
+        cache: _cache,
+        status: [],
+        proof: null,
     }
     setUsers(users.length, user)
 }
@@ -99,14 +51,13 @@ export const addNewUser = () => {
 export const addStatus = (index: number, proof: RLNFullProof) => {
     const user = users[index]
 
-    const status = user.cache.get().addProof(proof)
-    const newStatus = [...user.status.get(), objectToString(status)]
-
-    user.status.set(newStatus)
-    user.cache.set(user.cache.get())
+    const status = user.cache.addProof(proof)
 
     if (status.secret){
-        user.registry.get().slashMember( poseidon1([status.secret]) )
-        user.registry.set( user.registry.get() )
+        user.registry.slashMember( poseidon1([status.secret]) )
     }
+
+    setUsers(index, 'cache', user.cache)
+    setUsers(index, 'status', user.status.length, status)
+    setUsers(index, 'registry', user.registry)
 }

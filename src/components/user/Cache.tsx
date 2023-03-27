@@ -1,19 +1,19 @@
 import { poseidon1 } from "poseidon-lite"
-import { EvaluatedProof } from "rlnjs/dist/types/cache"
-import { Accessor } from "solid-js"
+import { users } from "../../store/users"
 
 
 export type Props = {
-  status: Accessor<string[]>
+  index: number
 }
 
-const CacheComponent = ({ status }: Props) => {
+const CacheComponent = ({ index }: Props) => {
+  const user = users[index]
   return (
     <div class="container box">
       <h3>Cache Status</h3>
       <div class="cache">
-        {status().map((str) => {
-          const { status, secret, nullifier, msg }: EvaluatedProof = JSON.parse(str)
+        {user.status.map((proof) => {
+          const { status, secret, nullifier, msg } = proof
           if (status == 'breach') {
             return (
               <div class='cache_proof breach'>
