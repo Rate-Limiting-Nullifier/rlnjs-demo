@@ -1,7 +1,6 @@
 import { poseidon1 } from "poseidon-lite"
 import { EvaluatedProof } from "rlnjs/dist/types/cache"
 import { Accessor } from "solid-js"
-import { toString } from '../../../src_react/utils'
 
 
 export type Props = {
@@ -9,7 +8,6 @@ export type Props = {
 }
 
 const CacheComponent = ({ status }: Props) => {
-  console.log(status())
   return (
     <div class="container box">
       <h3>Cache Status</h3>

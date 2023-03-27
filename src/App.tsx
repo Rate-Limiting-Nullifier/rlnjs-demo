@@ -4,32 +4,15 @@ import { createEffect } from 'solid-js'
 import './styles.css'
 import Control from './components/Control'
 import User from './components/user/User'
-import { users, addNewUser, addStatus } from './store/users'
+import { addNewUser, addStatus } from './store/users'
 import { publishedMsgProofs, publishQueue, setPublishedMsgProofs } from './store/store'
 import PublishedMessages from './components/PublishedMessages'
 
 addNewUser();
 addNewUser();
-const user1 = users[0];
-const user2 = users[1];
-
-
 
 
 const App: Component = () => {
-  createEffect(() => {
-    // Add User1 to both registries
-    user1.registry.get().addMember(user1.rln.get().commitment)
-    user2.registry.get().addMember(user1.rln.get().commitment)
-    console.log("User1 Registered")
-  })
-
-  createEffect(() => {
-    // Add User2 to both registries
-    user2.registry.get().addMember(user2.rln.get().commitment)
-    user1.registry.get().addMember(user2.rln.get().commitment)
-    console.log("User2 Registered")
-  })
 
   createEffect(() => {
     // Add proofs to the cache from the publish queue (starting from the end)
