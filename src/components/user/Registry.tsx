@@ -1,18 +1,19 @@
-import { registryType } from "../../store/users"
-import { createEffect, createSignal, onCleanup } from 'solid-js'
+import { createEffect, createSignal } from "solid-js"
+import { users } from "../../store/users"
 
 export type Props = {
-  registry: registryType
+  index: number
 }
 
-const RegistryComponent = ({ registry }: Props) => {
-  // TODO: check if registry.get() is reloaded in handlePublish in Message.tsx
+const RegistryComponent = ({ index }: Props) => {
   const [members, setMembers] = createSignal([(<></>)])
   const [slashed, setSlashed] = createSignal([(<></>)])
 
+  const user = users[index]
+
+
   const refresh = () => {
-    registry.set(registry.get())
-    const newMembers = registry.get().members.map((member) => (
+    const newMembers =  user.registry.members.map((member) => (
       <li class="bigint">
         <span style="font-style:italic">MemberID:</span>{" "}
         {member == 0n ? (
@@ -25,7 +26,7 @@ const RegistryComponent = ({ registry }: Props) => {
       </li>
     ))
     setMembers(newMembers)
-    const newSlashed = registry.get().slashedMembers.map((member) => (
+    const newSlashed = user.registry.slashedMembers.map((member) => (
       <li class="bigint breach">
         <span style="font-style:italic">MemberID:</span> {member.toString()}
       </li>
@@ -33,8 +34,9 @@ const RegistryComponent = ({ registry }: Props) => {
     setSlashed(newSlashed)
   }
 
+
   createEffect(() => {
-    const newMembers = registry.get().members.map((member) => (
+    const newMembers = user.registry.members.map((member) => (
       <li class="bigint">
         <span style="font-style:italic">MemberID:</span>{" "}
         {member == 0n ? (
@@ -50,7 +52,7 @@ const RegistryComponent = ({ registry }: Props) => {
   })
 
   createEffect(() => {
-    const newSlashed = registry.get().slashedMembers.map((member) => (
+    const newSlashed = user.registry.slashedMembers.map((member) => (
       <li class="bigint breach">
         <span style="font-style:italic">MemberID:</span> {member.toString()}
       </li>
@@ -58,9 +60,10 @@ const RegistryComponent = ({ registry }: Props) => {
     setSlashed(newSlashed)
   })
 
+
   return (
     <div class="container box">
-      <h3>Member Registry <button onclick={refresh}>↻</button></h3>
+      <h3>Member Registry  <button onclick={refresh}>↻</button></h3>
       <ul class="members">
         {members()}
       </ul>
