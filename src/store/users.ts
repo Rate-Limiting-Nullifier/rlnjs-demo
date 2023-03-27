@@ -52,12 +52,11 @@ export const addStatus = (index: number, proof: RLNFullProof) => {
     const user = users[index]
 
     const status = user.cache.addProof(proof)
-
     if (status.secret){
         user.registry.slashMember( poseidon1([status.secret]) )
+        setUsers(index, 'registry', user.registry)
     }
 
     setUsers(index, 'cache', user.cache)
     setUsers(index, 'status', user.status.length, status)
-    setUsers(index, 'registry', user.registry)
 }
