@@ -2,7 +2,7 @@ import { StrBigInt } from "rlnjs"
 import { createSignal } from "solid-js"
 import { objectToString } from "../../utils"
 import { epoch, publishQueue, setPublishQueue } from "../../store/store"
-import { setUsers, users } from "../../store/users"
+import { addStatus, setUsers, users } from "../../store/users"
 
 export type Props = {
     index: number
@@ -38,6 +38,9 @@ const Message = ({ index }: Props) => {
         message: message(),
         proof: fullProof,
       }
+      users.map((_, index) => {
+        addStatus(index, fullProof)
+      })
       setPublishQueue([ ...publishQueue(), newPublishQueue ])
 
       setDisableButton(false)

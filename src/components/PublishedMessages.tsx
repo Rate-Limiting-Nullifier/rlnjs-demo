@@ -12,11 +12,6 @@ const PublishedMessages = () => {
       }
       console.log("Updating Caches")
 
-
-      users.map((_, index) => {
-        addStatus(index, p.proof)
-      })
-
       const newPublishedMsgProofs =  {
           message: p.message,
           proof: p.proof
